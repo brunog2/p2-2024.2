@@ -1,6 +1,6 @@
 package br.ufal.ic.p2.abstraction.models;
 
-class Individual extends TaxPayer {
+public class Individual extends TaxPayer {
     private final double healthExpenditures;
 
     public Individual(String name, double annualIncome, double healthExpenditures) {
