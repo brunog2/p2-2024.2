@@ -2,7 +2,9 @@ package br.ufal.ic.p2.jackut.models;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Classe que representa um usuário no sistema Jackut.
@@ -15,6 +17,8 @@ public class User implements Serializable {
     private List<User> friends;
     private List<User> friendsRequest;
     private List<Message> messages;
+    private List<String> communities;
+
 
     /**
      * Construtor da classe User.
@@ -31,6 +35,7 @@ public class User implements Serializable {
         this.friends = new ArrayList<User>();
         this.friendsRequest = new ArrayList<User>();
         this.messages = new ArrayList<Message>();
+        this.communities = new ArrayList<String>();
     }
 
     /**
@@ -112,6 +117,14 @@ public class User implements Serializable {
      */
     public void setSenha(String senha) {
         this.senha = senha;
+    }
+
+    public void addCommunity(String communityName) {
+        this.communities.add(communityName);
+    }
+
+    public List<String> getCommunities() {
+        return this.communities;
     }
 
     /**

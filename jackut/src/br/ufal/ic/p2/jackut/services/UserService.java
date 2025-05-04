@@ -1,6 +1,8 @@
 package br.ufal.ic.p2.jackut.services;
 
+import br.ufal.ic.p2.jackut.exceptions.CommunityException;
 import br.ufal.ic.p2.jackut.exceptions.UserException;
+import br.ufal.ic.p2.jackut.models.Community;
 import br.ufal.ic.p2.jackut.models.User;
 import br.ufal.ic.p2.jackut.repositories.UserRepository;
 import br.ufal.ic.p2.jackut.validators.UserValidator;
@@ -108,6 +110,16 @@ public class UserService {
             }
         }
         return null;
+    }
+
+    public String getMemberCommunities(String login) throws Exception {
+       User user = getUser(login);
+
+        if (user == null) {
+            throw new UserException("Usuário não cadastrado.");
+        }
+
+        return "{" + String.join(",", user.getCommunities()) + "}";
     }
 
     /**

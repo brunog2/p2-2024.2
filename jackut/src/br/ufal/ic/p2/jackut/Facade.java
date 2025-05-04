@@ -15,6 +15,7 @@ public class Facade {
     private UserAttributeManager userAttributeManager;
     private FriendService friendService;
     private MessagesService messagesService;
+    private CommunityService communityService;
 
     /**
      * Construtor da Facade, inicializa todos os serviços necessários.
@@ -26,6 +27,7 @@ public class Facade {
         this.userService = new UserService(userRepository, userAttributeManager, sessionService);
         this.friendService = new FriendService(userService);
         this.messagesService = new MessagesService(userService);
+        this.communityService = new CommunityService(userService);
     }
 
     /**
@@ -114,6 +116,7 @@ public class Facade {
      */
     public void zerarSistema() {
         userService.zerarSistema();
+        communityService.removeAllCommunities();
     }
 
     /**
@@ -121,14 +124,16 @@ public class Facade {
      */
     public void encerrarSistema() {
         userService.encerrarSistema();
+        communityService.saveCommunities();
+
     }
 
     /**
      * Envia um recado de um usuário para outro.
      *
-     * @param id          ID da sessão do usuário remetente.
+     * @param id           ID da sessão do usuário remetente.
      * @param destinatario Login do usuário destinatário.
-     * @param recado      Conteúdo do recado.
+     * @param recado       Conteúdo do recado.
      * @throws Exception Se houver algum problema ao enviar o recado.
      */
     public void enviarRecado(String id, String destinatario, String recado) throws Exception {
@@ -144,5 +149,29 @@ public class Facade {
      */
     public String lerRecado(String id) throws Exception {
         return messagesService.lerRecado(id);
+    }
+
+    public void criarComunidade(String sessao, String nome, String descricao) throws Exception {
+        communityService.createCommunity(nome, descricao, sessao);
+    }
+
+    public String getDonoComunidade(String nome) throws Exception {
+        return communityService.getCommunityOwner(nome);
+    }
+
+    public String getMembrosComunidade(String nome) throws Exception {
+        return communityService.getCommunityMembers(nome);
+    }
+
+    public String getDescricaoComunidade(String nome) throws Exception {
+        return communityService.getCommunityDescription(nome);
+    }
+
+    public void adicionarComunidade(String sessao, String nome) throws Exception {
+        communityService.addMember(nome, sessao);
+    }
+
+    public String getComunidades(String sessao) throws Exception {
+        return userService.getMemberCommunities(sessao);
     }
 }
