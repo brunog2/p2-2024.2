@@ -8,6 +8,6 @@ public class ListFormatter {
      * @return Uma string contendo os elementos da lista separados por vírgula.
      */
     public static String formatList(java.util.List<String> list) {
-        return String.join(", ", list);
+        return "{"+String.join(",", list)+"}";
     }
 }
