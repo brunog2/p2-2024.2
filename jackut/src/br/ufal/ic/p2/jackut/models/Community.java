@@ -65,8 +65,8 @@ public class Community implements Serializable, Subject {
         this.owner = owner;
     }
 
-    public String getMembers() {
-        return "{" + String.join(",", this.members) + "}";
+    public List<String> getMembers() {
+        return this.members;
     }
 
     public void setMembers(List<String> members) {

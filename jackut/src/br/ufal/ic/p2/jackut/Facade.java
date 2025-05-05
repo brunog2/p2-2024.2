@@ -26,7 +26,9 @@ public class Facade {
         this.userRepository = new UserRepository();
         this.userAttributeManager = new UserAttributeManager();
         this.userService = new UserService(userRepository, userAttributeManager, sessionService);
-        this.communityService = new CommunityService(userService);
+        this.communityService = new CommunityService(userService); // Passa UserService como UserLookupService
+        this.userService.setCommunityService(communityService); // Configura a dependência circular resolvida
+
         this.relationshipService = new RelationshipService(userService);
         this.friendService = new FriendService(userService, relationshipService);
         this.messagesService = new MessagesService(userService, relationshipService);
@@ -217,5 +219,9 @@ public class Facade {
 
     public void adicionarInimigo(String login, String inimigo) throws Exception {
         relationshipService.addEnemy(login, inimigo);
+    }
+
+    public void removerUsuario(String login) throws Exception {
+        userService.removeUser(login);
     }
 }

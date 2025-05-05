@@ -3,6 +3,7 @@ package br.ufal.ic.p2.jackut.services;
 import br.ufal.ic.p2.jackut.exceptions.UserException;
 import br.ufal.ic.p2.jackut.models.Message;
 import br.ufal.ic.p2.jackut.models.User;
+import br.ufal.ic.p2.jackut.utils.ListFormatter;
 
 public class RelationshipService {
     UserService userService;
@@ -55,7 +56,7 @@ public class RelationshipService {
             throw new UserException("Usuário não cadastrado.");
         }
 
-        return user.getFans();
+        return ListFormatter.formatList(user.getFans());
     }
 
     public boolean isCrush(String userLogin, String crushLogin) throws UserException {
@@ -110,7 +111,7 @@ public class RelationshipService {
             throw new UserException("Usuário não cadastrado.");
         }
 
-        return user.getCrushs();
+        return ListFormatter.formatList(user.getCrushs());
     }
 
     public boolean isEnemy(String userLogin, String enemyLogin) throws UserException {

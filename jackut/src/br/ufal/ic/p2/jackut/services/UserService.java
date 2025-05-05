@@ -3,6 +3,7 @@ package br.ufal.ic.p2.jackut.services;
 import br.ufal.ic.p2.jackut.exceptions.CommunityException;
 import br.ufal.ic.p2.jackut.exceptions.UserException;
 import br.ufal.ic.p2.jackut.models.Community;
+import br.ufal.ic.p2.jackut.models.Message;
 import br.ufal.ic.p2.jackut.models.User;
 import br.ufal.ic.p2.jackut.repositories.UserRepository;
 import br.ufal.ic.p2.jackut.validators.UserValidator;
@@ -13,11 +14,12 @@ import java.util.List;
 /**
  * Serviço responsável pela gestão de usuários no sistema Jackut.
  */
-public class UserService {
+public class UserService implements UserLookupService {
     private List<User> users;
     private final UserRepository userRepository;
     private final UserAttributeManager userAttributeManager;
     private final SessionService sessionService;
+    private CommunityService communityService;
 
     /**
      * Construtor do UserService.
@@ -31,6 +33,10 @@ public class UserService {
         this.userAttributeManager = userAttributeManager;
         this.sessionService = sessionService;
         this.users = userRepository.getUsers();
+    }
+
+    public void setCommunityService(CommunityService communityService) {
+        this.communityService = communityService;
     }
 
     /**
@@ -71,6 +77,9 @@ public class UserService {
      */
     public String getAtributoUsuario(String login, String atributo) throws UserException {
         User user = getUser(login);
+
+//        System.out.println("Usuário: " + user);
+
         if (user == null) throw new UserException("Usuário não cadastrado.");
 
         String attributeValue = this.userAttributeManager.getAtributo(user, atributo);
@@ -103,6 +112,7 @@ public class UserService {
      * @param login Nome de usuário.
      * @return O objeto User se encontrado, ou null caso contrário.
      */
+    @Override
     public User getUser(String login) {
         for (User user : users) {
             if (user.getLogin().equals(login)) {
@@ -136,6 +146,88 @@ public class UserService {
         }
 
         return message;
+    }
+
+    public void removeUser(String login) throws UserException {
+//        System.out.println("Lista de usuários antes da remoção " + users);
+
+        User user = getUser(login);
+        if (user == null) {
+            throw new UserException("Usuário não cadastrado.");
+        }
+
+        // Remove user from all communities
+        for (String communityName : user.getCommunities()) {
+            try {
+                Community community = communityService.getCommunity(communityName);
+
+                for (String member : community.getMembers()) {
+                    User memberUser = getUser(member);
+                    if (memberUser != null && !memberUser.getLogin().equals(login)) {
+                        memberUser.removeCommunity(communityName);
+                    }
+                }
+
+                if (community.getOwner().getLogin().equals(login)) {
+                    communityService.removeCommunity(communityName);
+
+                } else {
+                    community.removeMember(user);
+                    user.removeCommunity(communityName);
+                }
+            } catch (CommunityException ignored) {
+                // Community might already be removed
+            }
+        }
+
+        // Remove the community from the owner's list of communities
+        user.getCommunities().clear();
+
+
+        // Remove user from relationships
+        for (User friend : user.getFriends()) {
+            friend.getFriends().remove(user);
+        }
+        for (String fan : user.getFans()) {
+            User fanUser = getUser(fan);
+            if (fanUser != null) {
+                fanUser.getIdols().remove(login);
+            }
+        }
+        for (String idol : user.getIdols()) {
+            User idolUser = getUser(idol);
+            if (idolUser != null) {
+                idolUser.getFans().remove(login);
+            }
+        }
+        for (String crush : user.getCrushs()) {
+            User crushUser = getUser(crush);
+            if (crushUser != null) {
+                crushUser.getCrushs().remove(login);
+            }
+        }
+        for (String enemy : user.getEnemies()) {
+            User enemyUser = getUser(enemy);
+            if (enemyUser != null) {
+                enemyUser.getEnemies().remove(login);
+            }
+        }
+
+        // Remove user messages
+        user.getMessages().clear();
+
+        // Remove sended messages from receivers
+        for (User receiver : users) {
+            receiver.getMessages().removeIf(message -> message.getSender() != null && message.getSender().getLogin().equals(login));
+        }
+
+        // Remove user from the system
+        users.remove(user);
+        sessionService.removeSessions(); // Remove session
+        userRepository.saveUsers(users); // Persist changes
+        communityService.saveCommunities(); // Persist community changes
+
+//        System.out.println("Lista de usuários após remoção " + users);
     }
 
     /**

@@ -147,6 +147,10 @@ public class User implements Serializable, Observer {
         this.communities.add(communityName);
     }
 
+    public void removeCommunity(String communityName) {
+        this.communities.remove(communityName);
+    }
+
     public List<String> getCommunities() {
         return this.communities;
     }
@@ -180,16 +184,16 @@ public class User implements Serializable, Observer {
         this.enemies.add(enemy);
     }
 
-    public String getIdols() {
-        return "{" + String.join(",", this.idols) + "}";
+    public List<String> getIdols() {
+        return this.idols;
     }
 
-    public String getCrushs() {
-        return "{" + String.join(",", this.crushs) + "}";
+    public List<String> getCrushs() {
+        return this.crushs;
     }
 
-    public String getEnemies() {
-        return "{" + String.join(",", this.enemies) + "}";
+    public List<String> getEnemies() {
+        return this.enemies;
     }
 
     public boolean isIdol(String idol) {
@@ -209,8 +213,8 @@ public class User implements Serializable, Observer {
         this.fans.add(fan);
     }
 
-    public String getFans() {
-        return "{" + String.join(",", this.fans) + "}";
+    public List<String> getFans() {
+        return this.fans;
     }
 
     /**

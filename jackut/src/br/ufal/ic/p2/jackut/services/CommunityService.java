@@ -5,22 +5,23 @@ import br.ufal.ic.p2.jackut.exceptions.UserException;
 import br.ufal.ic.p2.jackut.models.Community;
 import br.ufal.ic.p2.jackut.models.User;
 import br.ufal.ic.p2.jackut.repositories.CommunityRepository;
+import br.ufal.ic.p2.jackut.utils.ListFormatter;
 
 import java.util.List;
 
 public class CommunityService {
     private final List<Community> communities;
-    private final UserService userService;
+    private final UserLookupService userLookupService;
     private final CommunityRepository communityRepository;
 
-    public CommunityService(UserService userService) {
+    public CommunityService(UserLookupService userLookupService) {
         this.communityRepository = new CommunityRepository();
         this.communities = communityRepository.getCommunities();
-        this.userService = userService;
+        this.userLookupService = userLookupService;
     }
 
-    public void createCommunity(String name, String description, String user) throws CommunityException {
-        User owner = this.userService.getUser(user);
+    public void createCommunity(String name, String description, String user) throws Exception {
+        User owner = this.userLookupService.getUser(user);
 
         if (communities.stream().anyMatch(community -> community.getName().equals(name))) {
             throw new CommunityException("Comunidade com esse nome já existe.");
@@ -48,7 +49,7 @@ public class CommunityService {
     }
 
     public String getCommunityMembers(String name) throws CommunityException {
-        return this.getCommunity(name).getMembers();
+        return ListFormatter.formatList(this.getCommunity(name).getMembers());
     }
 
     public void saveCommunities() {
@@ -62,7 +63,7 @@ public class CommunityService {
 
     public void addMember(String communityName, String userName) throws Exception {
         Community community = this.getCommunity(communityName);
-        User user = this.userService.getUser(userName);
+        User user = this.userLookupService.getUser(userName);
 
         if (user == null) {
             throw new UserException("Usuário não cadastrado.");
@@ -82,7 +83,7 @@ public class CommunityService {
             String communityName,
             String message
     ) throws Exception {
-        User user = userService.getUser(sessionId);
+        User user = userLookupService.getUser(sessionId);
 
         if (user == null) {
             throw new UserException("Usuário não cadastrado.");
@@ -98,5 +99,16 @@ public class CommunityService {
 
         Community community = this.getCommunity(communityName);
         community.notifyObservers(message);
+    }
+
+    public void removeCommunity(String name) throws CommunityException {
+        Community community = this.getCommunity(name);
+
+
+        // Remove the community from the list of communities
+        communities.remove(community);
+
+        // Save the updated list of communities
+        this.saveCommunities();
     }
 }
