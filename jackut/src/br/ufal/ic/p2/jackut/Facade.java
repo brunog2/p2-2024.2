@@ -174,4 +174,18 @@ public class Facade {
     public String getComunidades(String sessao) throws Exception {
         return userService.getMemberCommunities(sessao);
     }
+
+    public void enviarMensagem(
+            String id,
+            String comunidade,
+            String mensagem
+    ) throws Exception {
+        communityService.sendMessage(id, comunidade, mensagem);
+    }
+
+    public String lerMensagem(
+            String id
+    ) throws Exception {
+        return userService.readCommunityMessage(id);
+    }
 }

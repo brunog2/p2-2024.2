@@ -6,9 +6,7 @@ import br.ufal.ic.p2.jackut.models.Community;
 import br.ufal.ic.p2.jackut.models.User;
 import br.ufal.ic.p2.jackut.repositories.CommunityRepository;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class CommunityService {
     private final List<Community> communities;
@@ -50,9 +48,7 @@ public class CommunityService {
     }
 
     public String getCommunityMembers(String name) throws CommunityException {
-        List<String> members = this.getCommunity(name).getMembers();
-
-        return "{" + String.join(",", members) + "}";
+        return this.getCommunity(name).getMembers();
     }
 
     public void saveCommunities() {
@@ -77,8 +73,30 @@ public class CommunityService {
         }
 
         community.addMember(user);
+        community.registerObserver(user);
         user.addCommunity(communityName);
     }
 
+    public void sendMessage(
+            String sessionId,
+            String communityName,
+            String message
+    ) throws Exception {
+        User user = userService.getUser(sessionId);
 
+        if (user == null) {
+            throw new UserException("Usuário não cadastrado.");
+        }
+
+        // Verifica se o usuário faz parte da comunidade
+//        if (user.getCommunities().stream()
+//                .filter(community -> community.equals(communityName))
+//                .findAny()
+//                .isEmpty()) {
+//            throw new CommunityException("Usuário não faz parte dessa comunidade.");
+//        }
+
+        Community community = this.getCommunity(communityName);
+        community.notifyObservers(message);
+    }
 }

@@ -1,8 +1,8 @@
 # User Story 7 - Envio de mensagens a comunidades
-# Permita a um usu·rio cadastrado do Jackut enviar uma mensagem a uma comunidade. Todos os usu·rios da comunidade a recebem.
+# Permita a um usu√°rio cadastrado do Jackut enviar uma mensagem a uma comunidade. Todos os usu√°rios da comunidade a recebem.
 
-# ESCLARECIMENTOS: Mensagens s„o enviadas por usu·rios a comunidades; Recados s„o enviados de um usu·rio do Jackut a outro. Os comandos enviarRecado e enviarMensagem s„o,
-# portanto, diferentes, assim como lerRecado e lerMensagem e os respectivos erros ("N„o h· recados." e "N„o h· mensagens.")
+# ESCLARECIMENTOS: Mensagens s√£o enviadas por usu√°rios a comunidades; Recados s√£o enviados de um usu√°rio do Jackut a outro. Os comandos enviarRecado e enviarMensagem s√£o,
+# portanto, diferentes, assim como lerRecado e lerMensagem e os respectivos erros ("N√£o h√° recados." e "N√£o h√° mensagens.")
 
 zerarSistema
 
@@ -19,13 +19,13 @@ criarComunidade sessao=${s1} nome="Comunidade de Jacques" descricao="abc"
 criarComunidade sessao=${s2} nome="Comunidade de Osorio" descricao="abc"
 criarComunidade sessao=${s3} nome="Comunidade de John" descricao="abc"
 
-# Mensagens s„o enviadas a comunidades, e todos os membros desta a recebem. Recados s„o privados, enviados de um usu·rio do Jackut para outro.
+# Mensagens s√£o enviadas a comunidades, e todos os membros desta a recebem. Recados s√£o privados, enviados de um usu√°rio do Jackut para outro.
 
 # teste de envio de uma mensagem para uma comunidade
 
-expectError "N„o h· mensagens." lerMensagem id=${s1}
-expectError "N„o h· mensagens." lerMensagem id=${s2}
-expectError "N„o h· mensagens." lerMensagem id=${s3}
+expectError "N√£o h√° mensagens." lerMensagem id=${s1}
+expectError "N√£o h√° mensagens." lerMensagem id=${s2}
+expectError "N√£o h√° mensagens." lerMensagem id=${s3}
 
 enviarMensagem id=${s1} comunidade="Comunidade de Jacques" mensagem="Mensagem de Jacques para a comunidade de Jacques"
 enviarMensagem id=${s2} comunidade="Comunidade de Osorio" mensagem="Mensagem de Osorio para a comunidade de Osorio"
@@ -35,11 +35,11 @@ expect "Mensagem de Jacques para a comunidade de Jacques" lerMensagem id=${s1}
 expect "Mensagem de Osorio para a comunidade de Osorio" lerMensagem id=${s2}
 expect "Mensagem de John para a comunidade de John" lerMensagem id=${s3}
 
-expectError "N„o h· mensagens." lerMensagem id=${s1}
-expectError "N„o h· mensagens." lerMensagem id=${s2}
-expectError "N„o h· mensagens." lerMensagem id=${s3}
+expectError "N√£o h√° mensagens." lerMensagem id=${s1}
+expectError "N√£o h√° mensagens." lerMensagem id=${s2}
+expectError "N√£o h√° mensagens." lerMensagem id=${s3}
 
-# teste de envio de m˙ltiplas mensagens de usu·rios diferentes para a mesma comunidade
+# teste de envio de m√∫ltiplas mensagens de usu√°rios diferentes para a mesma comunidade
 
 enviarMensagem id=${s1} comunidade="Comunidade de Jacques" mensagem="Mensagem de Jacques para a comunidade de Jacques"
 enviarMensagem id=${s2} comunidade="Comunidade de Jacques" mensagem="Mensagem de Osorio para a comunidade de Jacques"
@@ -51,9 +51,9 @@ expect "Mensagem de Osorio para a comunidade de Jacques" lerMensagem id=${s1}
 expect "Mensagem 2 de Jacques para a comunidade de Jacques" lerMensagem id=${s1}
 expect "Mensagem de John para a comunidade de Jacques" lerMensagem id=${s1}
 
-expectError "N„o h· mensagens." lerMensagem id=${s1}
-expectError "N„o h· mensagens." lerMensagem id=${s2}
-expectError "N„o h· mensagens." lerMensagem id=${s3}
+expectError "N√£o h√° mensagens." lerMensagem id=${s1}
+expectError "N√£o h√° mensagens." lerMensagem id=${s2}
+expectError "N√£o h√° mensagens." lerMensagem id=${s3}
 
 # teste de envio de mensagens para uma comunidade com mais de um membro
 
@@ -67,23 +67,23 @@ enviarMensagem id=${s3} comunidade="Comunidade de Jacques" mensagem="Mensagem de
 expect "Mensagem de Jacques para a comunidade de Jacques" lerMensagem id=${s1}
 expect "Mensagem de Osorio para a comunidade de Jacques" lerMensagem id=${s1}
 expect "Mensagem de John para a comunidade de Jacques" lerMensagem id=${s1}
-expectError "N„o h· mensagens." lerMensagem id=${s1}
+expectError "N√£o h√° mensagens." lerMensagem id=${s1}
 
 expect "Mensagem de Jacques para a comunidade de Jacques" lerMensagem id=${s2}
 expect "Mensagem de Osorio para a comunidade de Jacques" lerMensagem id=${s2}
 expect "Mensagem de John para a comunidade de Jacques" lerMensagem id=${s2}
-expectError "N„o h· mensagens." lerMensagem id=${s2}
+expectError "N√£o h√° mensagens." lerMensagem id=${s2}
 
 expect "Mensagem de Jacques para a comunidade de Jacques" lerMensagem id=${s3}
 expect "Mensagem de Osorio para a comunidade de Jacques" lerMensagem id=${s3}
 expect "Mensagem de John para a comunidade de Jacques" lerMensagem id=${s3}
-expectError "N„o h· mensagens." lerMensagem id=${s2}
+expectError "N√£o h√° mensagens." lerMensagem id=${s2}
 
-# teste de diferenciaÁ„o entre recados e mensagens
+# teste de diferencia√ß√£o entre recados e mensagens
 
-expectError "N„o h· recados." lerRecado id=${s1}
-expectError "N„o h· recados." lerRecado id=${s2}
-expectError "N„o h· recados." lerRecado id=${s3}
+expectError "N√£o h√° recados." lerRecado id=${s1}
+expectError "N√£o h√° recados." lerRecado id=${s2}
+expectError "N√£o h√° recados." lerRecado id=${s3}
 
 enviarRecado id=${s1} destinatario=oabath recado="Recado de Jacques para Osorio"
 enviarRecado id=${s2} destinatario=jpsauve recado="Recado de Osorio para Jacques"
@@ -92,9 +92,9 @@ enviarRecado id=${s2} destinatario=jdoe recado="Recado de Osorio para John"
 enviarRecado id=${s1} destinatario=jdoe recado="Recado de Jacques para John"
 enviarRecado id=${s3} destinatario=jpsauve recado="Recado de John para Jacques"
 
-expectError "N„o h· mensagens." lerMensagem id=${s1}
-expectError "N„o h· mensagens." lerMensagem id=${s2}
-expectError "N„o h· mensagens." lerMensagem id=${s3}
+expectError "N√£o h√° mensagens." lerMensagem id=${s1}
+expectError "N√£o h√° mensagens." lerMensagem id=${s2}
+expectError "N√£o h√° mensagens." lerMensagem id=${s3}
 
 enviarMensagem id=${s1} comunidade="Comunidade de Jacques" mensagem="Mensagem de Jacques para a comunidade de Jacques"
 enviarMensagem id=${s2} comunidade="Comunidade de Jacques" mensagem="Mensagem de Osorio para a comunidade de Jacques"
@@ -102,8 +102,8 @@ enviarMensagem id=${s3} comunidade="Comunidade de Jacques" mensagem="Mensagem de
 
 # erros de envio de mensagem
 
-expectError "Usu·rio n„o cadastrado." enviarMensagem id=${s4} comunidade="Comunidade de Jacques" mensagem="Mensagem de um usu·rio fantasma"
-expectError "Comunidade n„o existe." enviarMensagem id=${s1}  comunidade="Comunidade fantasma" mensagem="Mensagem de Jacques para uma comunidade fantasma."
+expectError "Usu√°rio n√£o cadastrado." enviarMensagem id=${s4} comunidade="Comunidade de Jacques" mensagem="Mensagem de um usu√°rio fantasma"
+expectError "Comunidade n√£o existe." enviarMensagem id=${s1}  comunidade="Comunidade fantasma" mensagem="Mensagem de Jacques para uma comunidade fantasma."
 
 encerrarSistema
 quit

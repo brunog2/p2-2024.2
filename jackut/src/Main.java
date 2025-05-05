@@ -13,7 +13,7 @@ public class Main {
 //                "tests/us5_1.txt",
 //                "tests/us5_2.txt",
 //                "tests/us6_1.txt",
-                "tests/us6_2.txt",
+//                "tests/us6_2.txt",
 //                "tests/us7_1.txt",
 //                "tests/us7_2.txt",
         };

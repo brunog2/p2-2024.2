@@ -113,13 +113,29 @@ public class UserService {
     }
 
     public String getMemberCommunities(String login) throws Exception {
-       User user = getUser(login);
+        User user = getUser(login);
 
         if (user == null) {
             throw new UserException("Usuário não cadastrado.");
         }
 
         return "{" + String.join(",", user.getCommunities()) + "}";
+    }
+
+    public String readCommunityMessage(String login) throws Exception {
+        User user = getUser(login);
+
+        if (user == null) {
+            throw new UserException("Usuário não cadastrado.");
+        }
+
+        String message = user.readCommunityMessage();
+
+        if (message == null) {
+            throw new CommunityException("Não há mensagens.");
+        }
+
+        return message;
     }
 
     /**
