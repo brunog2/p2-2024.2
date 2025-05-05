@@ -4,11 +4,14 @@ import br.ufal.ic.p2.jackut.exceptions.UserException;
 import br.ufal.ic.p2.jackut.models.User;
 import br.ufal.ic.p2.jackut.validators.FriendValidator;
 
+import javax.management.relation.Relation;
+
 /**
  * Serviço responsável por gerenciar as operações relacionadas a amigos no sistema Jackut.
  */
 public class FriendService {
     private UserService userService;
+    private RelationshipService relationshipService;
     private FriendValidator friendValidator;
 
     /**
@@ -16,9 +19,10 @@ public class FriendService {
      *
      * @param userService Serviço de usuários.
      */
-    public FriendService(UserService userService) {
+    public FriendService(UserService userService, RelationshipService relationshipService) {
         this.userService = userService;
-        this.friendValidator = new FriendValidator(userService);
+        this.relationshipService = relationshipService;
+        this.friendValidator = new FriendValidator(userService, relationshipService);
     }
 
     /**

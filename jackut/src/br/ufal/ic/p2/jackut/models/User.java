@@ -22,6 +22,14 @@ public class User implements Serializable, Observer {
     private List<String> communities;
     private List<String> communitiesMessages;
 
+    // Relationship attributes
+    private List<String> idols;
+    private List<String> crushs;
+    private List<String> enemies;
+
+    // Inverse relationship attributes
+    private List<String> fans;
+
     /**
      * Construtor da classe User.
      *
@@ -39,6 +47,10 @@ public class User implements Serializable, Observer {
         this.messages = new ArrayList<Message>();
         this.communities = new ArrayList<String>();
         this.communitiesMessages = new ArrayList<String>();
+        this.idols = new ArrayList<String>();
+        this.crushs = new ArrayList<String>();
+        this.enemies = new ArrayList<String>();
+        this.fans = new ArrayList<String>();
     }
 
     @Override
@@ -100,6 +112,10 @@ public class User implements Serializable, Observer {
         return this.messages;
     }
 
+    public void addMessage(Message message) {
+        this.messages.add(message);
+    }
+
     /**
      * Define o login do usuário.
      *
@@ -149,6 +165,52 @@ public class User implements Serializable, Observer {
         this.communitiesMessages.remove(0);
 
         return message;
+    }
+
+    // Relationship methods
+    public void addIdol(String idol) {
+        this.idols.add(idol);
+    }
+
+    public void addCrush(String crush) {
+        this.crushs.add(crush);
+    }
+
+    public void addEnemy(String enemy) {
+        this.enemies.add(enemy);
+    }
+
+    public String getIdols() {
+        return "{" + String.join(",", this.idols) + "}";
+    }
+
+    public String getCrushs() {
+        return "{" + String.join(",", this.crushs) + "}";
+    }
+
+    public String getEnemies() {
+        return "{" + String.join(",", this.enemies) + "}";
+    }
+
+    public boolean isIdol(String idol) {
+        return this.idols.contains(idol);
+    }
+
+    public boolean isCrush(String crush) {
+        return this.crushs.contains(crush);
+    }
+
+    public boolean isEnemy(String enemy) {
+        return this.enemies.contains(enemy);
+    }
+
+    // Inverse relationship methods
+    public void addFan(String fan) {
+        this.fans.add(fan);
+    }
+
+    public String getFans() {
+        return "{" + String.join(",", this.fans) + "}";
     }
 
     /**

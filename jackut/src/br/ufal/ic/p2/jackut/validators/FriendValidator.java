@@ -2,21 +2,27 @@ package br.ufal.ic.p2.jackut.validators;
 
 import br.ufal.ic.p2.jackut.exceptions.UserException;
 import br.ufal.ic.p2.jackut.models.User;
+import br.ufal.ic.p2.jackut.services.FriendService;
+import br.ufal.ic.p2.jackut.services.RelationshipService;
 import br.ufal.ic.p2.jackut.services.UserService;
+
+import javax.management.relation.Relation;
 
 /**
  * Validador responsável por verificar as regras de adição de amigos no sistema Jackut.
  */
 public class FriendValidator {
     private UserService userService;
+private RelationshipService relationshipService;
 
     /**
      * Construtor do FriendValidator.
      *
      * @param userService Serviço de usuários.
      */
-    public FriendValidator(UserService userService) {
+    public FriendValidator(UserService userService, RelationshipService relationshipService) {
         this.userService = userService;
+        this.relationshipService = relationshipService;
     }
 
     /**
@@ -31,6 +37,12 @@ public class FriendValidator {
     public void validateAddFriend(String login, String amigo, User user, User friend) throws UserException {
         if (user == null || friend == null) {
             throw new UserException("Usuário não cadastrado.");
+        }
+
+//        System.out.println("Validando adição de amigo: " + login + " -> " + amigo + " -> " + this.relationshipService.isEnemy(login, amigo)  + " -> " + this.userService.getUser(amigo).getEnemies());
+
+        if (this.relationshipService.isEnemy(amigo, login)) {
+            throw new UserException("Função inválida: "+ this.userService.getUser(amigo).getNome() + " é seu inimigo.");
         }
 
         if (user.getFriendsRequest().contains(friend)) {

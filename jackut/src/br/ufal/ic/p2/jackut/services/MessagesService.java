@@ -11,22 +11,24 @@ import java.util.List;
  */
 public class MessagesService {
     private UserService userService;
+    private RelationshipService relationshipService;
 
     /**
      * Construtor do MessagesService.
      *
      * @param userService Serviço de usuários.
      */
-    public MessagesService(UserService userService) {
+    public MessagesService(UserService userService, RelationshipService relationshipService) {
         this.userService = userService;
+        this.relationshipService = relationshipService;
     }
 
     /**
      * Envia um recado de um usuário para outro.
      *
-     * @param sessionId   ID da sessão do usuário remetente.
+     * @param sessionId    ID da sessão do usuário remetente.
      * @param destinatario Login do usuário destinatário.
-     * @param recado      Conteúdo do recado.
+     * @param recado       Conteúdo do recado.
      * @throws Exception Se o usuário não estiver cadastrado ou tentar enviar recado para si mesmo.
      */
     public void enviarRecado(String sessionId, String destinatario, String recado) throws Exception {
@@ -39,8 +41,12 @@ public class MessagesService {
             throw new Exception("Usuário não pode enviar recado para si mesmo.");
         }
 
+        if (relationshipService.isEnemy(destinatario, sessionId)) {
+            throw new UserException("Função inválida: " + receiver.getNome() + " é seu inimigo.");
+        }
+
         Message message = new Message(recado, user, receiver);
-        receiver.getMessages().add(message);
+        receiver.addMessage(message);
     }
 
     /**

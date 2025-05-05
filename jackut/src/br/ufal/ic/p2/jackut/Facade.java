@@ -16,6 +16,7 @@ public class Facade {
     private FriendService friendService;
     private MessagesService messagesService;
     private CommunityService communityService;
+    private RelationshipService relationshipService;
 
     /**
      * Construtor da Facade, inicializa todos os serviços necessários.
@@ -25,9 +26,10 @@ public class Facade {
         this.userRepository = new UserRepository();
         this.userAttributeManager = new UserAttributeManager();
         this.userService = new UserService(userRepository, userAttributeManager, sessionService);
-        this.friendService = new FriendService(userService);
-        this.messagesService = new MessagesService(userService);
         this.communityService = new CommunityService(userService);
+        this.relationshipService = new RelationshipService(userService);
+        this.friendService = new FriendService(userService, relationshipService);
+        this.messagesService = new MessagesService(userService, relationshipService);
     }
 
     /**
@@ -187,5 +189,33 @@ public class Facade {
             String id
     ) throws Exception {
         return userService.readCommunityMessage(id);
+    }
+
+    public void adicionarIdolo(String login, String idolo) throws Exception {
+        relationshipService.addIdol(login, idolo);
+    }
+
+    public boolean ehFa(String login, String idolo) throws Exception {
+        return relationshipService.isIdol(login, idolo);
+    }
+
+    public String getFas(String login) throws Exception {
+        return relationshipService.getFans(login);
+    }
+
+    public boolean ehPaquera(String login, String paquera) throws Exception {
+        return relationshipService.isCrush(login, paquera);
+    }
+
+    public void adicionarPaquera(String login, String paquera) throws Exception {
+        relationshipService.addCrush(login, paquera);
+    }
+
+    public String getPaqueras(String login) throws Exception {
+        return relationshipService.getCrushs(login);
+    }
+
+    public void adicionarInimigo(String login, String inimigo) throws Exception {
+        relationshipService.addEnemy(login, inimigo);
     }
 }
