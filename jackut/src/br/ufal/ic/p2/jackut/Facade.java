@@ -40,9 +40,9 @@ public class Facade {
      * @param login Nome de usuário único.
      * @param senha Senha do usuário.
      * @param nome  Nome real do usuário.
-     * @throws UserException Se o login já estiver em uso ou os dados forem inválidos.
+     * @throws Exception Se o login já estiver em uso ou os dados forem inválidos.
      */
-    public void criarUsuario(String login, String senha, String nome) throws UserException {
+    public void criarUsuario(String login, String senha, String nome) throws Exception {
         userService.criarUsuario(login, senha, nome);
     }
 
@@ -52,9 +52,9 @@ public class Facade {
      * @param login Nome de usuário.
      * @param senha Senha do usuário.
      * @return O login do usuário autenticado.
-     * @throws UserException Se o login ou senha forem inválidos.
+     * @throws Exception Se o login ou senha forem inválidos.
      */
-    public String abrirSessao(String login, String senha) throws UserException {
+    public String abrirSessao(String login, String senha) throws Exception {
         return userService.abrirSessao(login, senha);
     }
 
@@ -64,9 +64,9 @@ public class Facade {
      * @param login    Nome de usuário.
      * @param atributo Nome do atributo.
      * @return O valor do atributo.
-     * @throws UserException Se o usuário não existir ou o atributo não estiver preenchido.
+     * @throws Exception Se o usuário não existir ou o atributo não estiver preenchido.
      */
-    public String getAtributoUsuario(String login, String atributo) throws UserException {
+    public String getAtributoUsuario(String login, String atributo) throws Exception {
         return userService.getAtributoUsuario(login, atributo);
     }
 
@@ -76,9 +76,9 @@ public class Facade {
      * @param id       ID do usuário.
      * @param atributo Nome do atributo a ser editado.
      * @param valor    Novo valor do atributo.
-     * @throws UserException Se o usuário não existir.
+     * @throws Exception Se o usuário não existir.
      */
-    public void editarPerfil(String id, String atributo, String valor) throws UserException {
+    public void editarPerfil(String id, String atributo, String valor) throws Exception {
         userService.editarPerfil(id, atributo, valor);
     }
 
@@ -98,9 +98,9 @@ public class Facade {
      *
      * @param login Nome de usuário.
      * @param amigo Nome do amigo.
-     * @throws UserException Se houver algum problema ao adicionar o amigo.
+     * @throws Exception Se houver algum problema ao adicionar o amigo.
      */
-    public void adicionarAmigo(String login, String amigo) throws UserException {
+    public void adicionarAmigo(String login, String amigo) throws Exception {
         friendService.adicionarAmigo(login, amigo);
     }
 

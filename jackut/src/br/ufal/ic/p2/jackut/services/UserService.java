@@ -43,7 +43,9 @@ public class UserService implements UserLookupService {
      * @param login Nome de usuário único.
      * @param senha Senha do usuário.
      * @param nome  Nome real do usuário.
-     * @throws UserException Se o login já estiver em uso ou os dados forem inválidos.
+     * @throws UserAlreadyExistsException Se o login já estiver em uso.
+     * @throws InvalidLoginException Se o login for inválido.
+     * @throws InvalidPasswordException Se a senha for inválida.
      */
     public void criarUsuario(String login, String senha, String nome) throws UserAlreadyExistsException, InvalidLoginException, InvalidPasswordException {
         UserValidator.validateNewUser(login, senha, nome, users);
@@ -57,7 +59,7 @@ public class UserService implements UserLookupService {
      * @param login Nome de usuário.
      * @param senha Senha do usuário.
      * @return O login do usuário autenticado.
-     * @throws UserException Se o login ou senha forem inválidos.
+     * @throws InvalidLoginOrPasswordException Se o login ou senha forem inválidos.
      */
     public String abrirSessao(String login, String senha) throws InvalidLoginOrPasswordException {
         User user = UserValidator.validateLogin(login, senha, users);
@@ -71,7 +73,8 @@ public class UserService implements UserLookupService {
      * @param login    Nome de usuário.
      * @param atributo Nome do atributo.
      * @return O valor do atributo.
-     * @throws UserException Se o usuário não existir ou o atributo não estiver preenchido.
+     * @throws UserNotExistsException Se o usuário não existir.
+     * @throws AttributeNotFilledException Se o atributo não estiver preenchido.
      */
     public String getAtributoUsuario(String login, String atributo) throws UserNotExistsException, AttributeNotFilledException {
         User user = getUser(login);
@@ -94,7 +97,7 @@ public class UserService implements UserLookupService {
      * @param id       ID do usuário.
      * @param atributo Nome do atributo a ser editado.
      * @param valor    Novo valor do atributo.
-     * @throws UserException Se o usuário não existir.
+     * @throws UserNotExistsException Se o usuário não existir.
      */
     public void editarPerfil(String id, String atributo, String valor) throws UserNotExistsException {
         User user = getUser(id);
@@ -146,7 +149,7 @@ public class UserService implements UserLookupService {
         return message;
     }
 
-    public void removeUser(String login) throws UserNotExistsException {
+    public void removeUser(String login) throws UserNotExistsException, CommunityNotExistsException {
 //        System.out.println("Lista de usuários antes da remoção " + users);
 
         User user = getUser(login);
@@ -173,7 +176,7 @@ public class UserService implements UserLookupService {
                     community.removeMember(user);
                     user.removeCommunity(communityName);
                 }
-            } catch (CommunityException ignored) {
+            } catch (CommunityNotExistsException ignored) {
                 // Community might already be removed
             }
         }
