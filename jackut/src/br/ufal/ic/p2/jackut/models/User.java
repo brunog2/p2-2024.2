@@ -4,9 +4,7 @@ import br.ufal.ic.p2.jackut.interfaces.Observer;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Classe que representa um usuário no sistema Jackut.
@@ -42,15 +40,15 @@ public class User implements Serializable, Observer {
         this.senha = senha;
         this.nome = nome;
         this.attributes = new UserAttributes();
-        this.friends = new ArrayList<User>();
-        this.friendsRequest = new ArrayList<User>();
-        this.messages = new ArrayList<Message>();
-        this.communities = new ArrayList<String>();
-        this.communitiesMessages = new ArrayList<String>();
-        this.idols = new ArrayList<String>();
-        this.crushs = new ArrayList<String>();
-        this.enemies = new ArrayList<String>();
-        this.fans = new ArrayList<String>();
+        this.friends = new ArrayList<>();
+        this.friendsRequest = new ArrayList<>();
+        this.messages = new ArrayList<>();
+        this.communities = new ArrayList<>();
+        this.communitiesMessages = new ArrayList<>();
+        this.idols = new ArrayList<>();
+        this.crushs = new ArrayList<>();
+        this.enemies = new ArrayList<>();
+        this.fans = new ArrayList<>();
     }
 
     @Override
@@ -112,6 +110,11 @@ public class User implements Serializable, Observer {
         return this.messages;
     }
 
+    /**
+     * Adiciona uma mensagem à lista de mensagens do usuário.
+     *
+     * @param message Mensagem a ser adicionada.
+     */
     public void addMessage(Message message) {
         this.messages.add(message);
     }
@@ -143,22 +146,47 @@ public class User implements Serializable, Observer {
         this.senha = senha;
     }
 
+    /**
+     * Adiciona uma comunidade à lista de comunidades do usuário.
+     *
+     * @param communityName Nome da comunidade a ser adicionada.
+     */
     public void addCommunity(String communityName) {
         this.communities.add(communityName);
     }
 
+    /**
+     * Remove uma comunidade da lista de comunidades do usuário.
+     *
+     * @param communityName Nome da comunidade a ser removida.
+     */
     public void removeCommunity(String communityName) {
         this.communities.remove(communityName);
     }
 
+    /**
+     * Obtém a lista de comunidades do usuário.
+     *
+     * @return Lista de comunidades.
+     */
     public List<String> getCommunities() {
         return this.communities;
     }
 
+    /**
+     * Adiciona uma mensagem de comunidade à lista de mensagens de comunidades do usuário.
+     *
+     * @param message Mensagem a ser adicionada.
+     */
     public void addCommunityMessage(String message) {
         this.communitiesMessages.add(message);
     }
 
+    /**
+     * Lê a próxima mensagem de comunidade da lista de mensagens de comunidades do usuário.
+     *
+     * @return Mensagem de comunidade ou null se não houver mensagens.
+     */
     public String readCommunityMessage() {
         if (this.communitiesMessages.isEmpty()) {
             return null;
@@ -171,48 +199,104 @@ public class User implements Serializable, Observer {
         return message;
     }
 
-    // Relationship methods
+    /**
+     * Adiciona um ídolo à lista de ídolos do usuário.
+     *
+     * @param idol Login do ídolo a ser adicionado.
+     */
     public void addIdol(String idol) {
         this.idols.add(idol);
     }
 
+    /**
+     * Adiciona um paquera à lista de paqueras do usuário.
+     *
+     * @param crush Login do paquera a ser adicionado.
+     */
     public void addCrush(String crush) {
         this.crushs.add(crush);
     }
 
+    /**
+     * Adiciona um inimigo à lista de inimigos do usuário.
+     *
+     * @param enemy Login do inimigo a ser adicionado.
+     */
     public void addEnemy(String enemy) {
         this.enemies.add(enemy);
     }
 
+    /**
+     * Obtém a lista de ídolos do usuário.
+     *
+     * @return Lista de ídolos.
+     */
     public List<String> getIdols() {
         return this.idols;
     }
 
+    /**
+     * Obtém a lista de paqueras do usuário.
+     *
+     * @return Lista de paqueras.
+     */
     public List<String> getCrushs() {
         return this.crushs;
     }
 
+    /**
+     * Obtém a lista de inimigos do usuário.
+     *
+     * @return Lista de inimigos.
+     */
     public List<String> getEnemies() {
         return this.enemies;
     }
 
+    /**
+     * Verifica se um login está na lista de ídolos do usuário.
+     *
+     * @param idol Login do ídolo.
+     * @return true se o login estiver na lista de ídolos, false caso contrário.
+     */
     public boolean isIdol(String idol) {
         return this.idols.contains(idol);
     }
 
+    /**
+     * Verifica se um login está na lista de paqueras do usuário.
+     *
+     * @param crush Login do paquera.
+     * @return true se o login estiver na lista de paqueras, false caso contrário.
+     */
     public boolean isCrush(String crush) {
         return this.crushs.contains(crush);
     }
 
+    /**
+     * Verifica se um login está na lista de inimigos do usuário.
+     *
+     * @param enemy Login do inimigo.
+     * @return true se o login estiver na lista de inimigos, false caso contrário.
+     */
     public boolean isEnemy(String enemy) {
         return this.enemies.contains(enemy);
     }
 
-    // Inverse relationship methods
+    /**
+     * Adiciona um fã à lista de fãs do usuário.
+     *
+     * @param fan Login do fã a ser adicionado.
+     */
     public void addFan(String fan) {
         this.fans.add(fan);
     }
 
+    /**
+     * Obtém a lista de fãs do usuário.
+     *
+     * @return Lista de fãs.
+     */
     public List<String> getFans() {
         return this.fans;
     }

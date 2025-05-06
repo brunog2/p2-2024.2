@@ -20,7 +20,6 @@ public class CommunityRepository {
     public List<Community> getCommunities() {
         File file = new File(FILE_NAME);
         if (!file.exists()) return new ArrayList<>();
-
         try (ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(file))) {
             Object obj = objectInputStream.readObject();
             if (obj instanceof List<?>) {

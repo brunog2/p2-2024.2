@@ -5,7 +5,7 @@ import br.ufal.ic.p2.jackut.models.User;
 import java.util.List;
 
 /**
- * Validador responsável por verificar as regras de criação e autenticação de usuários no sistema Jackut.
+ * Classe responsável por validar as regras de criação e autenticação de usuários no sistema Jackut.
  */
 public class UserValidator {
 
@@ -16,7 +16,9 @@ public class UserValidator {
      * @param senha Senha do usuário.
      * @param nome Nome real do usuário.
      * @param users Lista de usuários existentes.
-     * @throws UserException Se o login já estiver em uso ou os dados forem inválidos.
+     * @throws UserAlreadyExistsException Se o login já estiver em uso.
+     * @throws InvalidLoginException Se o login for nulo, vazio ou contiver espaços.
+     * @throws InvalidPasswordException Se a senha for nula ou vazia.
      */
     public static void validateNewUser(String login, String senha, String nome, List<User> users) throws UserAlreadyExistsException, InvalidLoginException, InvalidPasswordException {
         if (users.stream().anyMatch(user -> user.getLogin().equals(login))) {
@@ -37,7 +39,7 @@ public class UserValidator {
      * @param senha Senha do usuário.
      * @param users Lista de usuários existentes.
      * @return O usuário autenticado.
-     * @throws UserException Se o login ou senha forem inválidos.
+     * @throws InvalidLoginOrPasswordException Se o login ou a senha forem inválidos.
      */
     public static User validateLogin(String login, String senha, List<User> users) throws InvalidLoginOrPasswordException {
         return users.stream()

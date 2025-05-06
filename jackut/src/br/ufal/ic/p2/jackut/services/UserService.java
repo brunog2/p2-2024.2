@@ -33,6 +33,11 @@ public class UserService implements UserLookupService {
         this.users = userRepository.getUsers();
     }
 
+    /**
+     * Define o serviço de comunidades.
+     *
+     * @param communityService Serviço de comunidades.
+     */
     public void setCommunityService(CommunityService communityService) {
         this.communityService = communityService;
     }
@@ -79,8 +84,6 @@ public class UserService implements UserLookupService {
     public String getAtributoUsuario(String login, String atributo) throws UserNotExistsException, AttributeNotFilledException {
         User user = getUser(login);
 
-//        System.out.println("Usuário: " + user);
-
         if (user == null) throw new UserNotExistsException();
 
         String attributeValue = this.userAttributeManager.getAtributo(user, atributo);
@@ -123,7 +126,14 @@ public class UserService implements UserLookupService {
         return null;
     }
 
-    public String getMemberCommunities(String login) throws Exception {
+    /**
+     * Obtém as comunidades das quais o usuário é membro.
+     *
+     * @param login Nome de usuário.
+     * @return Uma string contendo os nomes das comunidades.
+     * @throws UserNotExistsException Se o usuário não existir.
+     */
+    public String getMemberCommunities(String login) throws UserNotExistsException {
         User user = getUser(login);
 
         if (user == null) {
@@ -133,6 +143,14 @@ public class UserService implements UserLookupService {
         return "{" + String.join(",", user.getCommunities()) + "}";
     }
 
+    /**
+     * Lê uma mensagem de comunidade para o usuário.
+     *
+     * @param login Nome de usuário.
+     * @return A mensagem da comunidade.
+     * @throws EmptyCommunityMessagesException Se não houver mensagens na comunidade.
+     * @throws UserNotExistsException Se o usuário não existir.
+     */
     public String readCommunityMessage(String login) throws EmptyCommunityMessagesException, UserNotExistsException {
         User user = getUser(login);
 
@@ -149,15 +167,20 @@ public class UserService implements UserLookupService {
         return message;
     }
 
+    /**
+     * Remove um usuário do sistema.
+     *
+     * @param login Nome de usuário.
+     * @throws UserNotExistsException Se o usuário não existir.
+     * @throws CommunityNotExistsException Se alguma comunidade associada não existir.
+     */
     public void removeUser(String login) throws UserNotExistsException, CommunityNotExistsException {
-//        System.out.println("Lista de usuários antes da remoção " + users);
-
         User user = getUser(login);
         if (user == null) {
             throw new UserNotExistsException();
         }
 
-        // Remove user from all communities
+        // Remove o usuário de todas as comunidades e relacionamentos
         for (String communityName : user.getCommunities()) {
             try {
                 Community community = communityService.getCommunity(communityName);
@@ -177,15 +200,12 @@ public class UserService implements UserLookupService {
                     user.removeCommunity(communityName);
                 }
             } catch (CommunityNotExistsException ignored) {
-                // Community might already be removed
+                // Comunidade pode já ter sido removida
             }
         }
 
-        // Remove the community from the owner's list of communities
         user.getCommunities().clear();
 
-
-        // Remove user from relationships
         for (User friend : user.getFriends()) {
             friend.getFriends().remove(user);
         }
@@ -214,21 +234,16 @@ public class UserService implements UserLookupService {
             }
         }
 
-        // Remove user messages
         user.getMessages().clear();
 
-        // Remove sended messages from receivers
         for (User receiver : users) {
             receiver.getMessages().removeIf(message -> message.getSender() != null && message.getSender().getLogin().equals(login));
         }
 
-        // Remove user from the system
         users.remove(user);
-        sessionService.removeSessions(); // Remove session
-        userRepository.saveUsers(users); // Persist changes
-        communityService.saveCommunities(); // Persist community changes
-
-//        System.out.println("Lista de usuários após remoção " + users);
+        sessionService.removeSessions();
+        userRepository.saveUsers(users);
+        communityService.saveCommunities();
     }
 
     /**

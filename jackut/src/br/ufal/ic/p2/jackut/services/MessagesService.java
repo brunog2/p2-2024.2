@@ -17,6 +17,7 @@ public class MessagesService {
      * Construtor do MessagesService.
      *
      * @param userService Serviço de usuários.
+     * @param relationshipService Serviço de relacionamentos entre usuários.
      */
     public MessagesService(UserService userService, RelationshipService relationshipService) {
         this.userService = userService;
@@ -29,7 +30,9 @@ public class MessagesService {
      * @param sessionId    ID da sessão do usuário remetente.
      * @param destinatario Login do usuário destinatário.
      * @param recado       Conteúdo do recado.
-     * @throws Exception Se o usuário não estiver cadastrado ou tentar enviar recado para si mesmo.
+     * @throws UserCannotSendMessageToHimselfException Se o usuário tentar enviar um recado para si mesmo.
+     * @throws EnemyUserException Se o destinatário for inimigo do remetente.
+     * @throws UserNotExistsException Se o remetente ou o destinatário não existirem.
      */
     public void enviarRecado(String sessionId, String destinatario, String recado) throws UserCannotSendMessageToHimselfException, EnemyUserException, UserNotExistsException {
         User user = this.userService.getUser(sessionId);
@@ -54,7 +57,8 @@ public class MessagesService {
      *
      * @param sessionId ID da sessão do usuário.
      * @return O conteúdo do recado.
-     * @throws Exception Se o usuário não estiver cadastrado ou não houver recados.
+     * @throws EmptyUserMessagesException Se não houver recados para o usuário.
+     * @throws UserNotExistsException Se o usuário não existir.
      */
     public String lerRecado(String sessionId) throws EmptyUserMessagesException, UserNotExistsException {
         User user = this.userService.getUser(sessionId);

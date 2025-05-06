@@ -4,8 +4,6 @@ import br.ufal.ic.p2.jackut.exceptions.*;
 import br.ufal.ic.p2.jackut.models.User;
 import br.ufal.ic.p2.jackut.validators.FriendValidator;
 
-import javax.management.relation.Relation;
-
 /**
  * Serviço responsável por gerenciar as operações relacionadas a amigos no sistema Jackut.
  */
@@ -18,6 +16,7 @@ public class FriendService {
      * Construtor do FriendService.
      *
      * @param userService Serviço de usuários.
+     * @param relationshipService Serviço de relacionamentos entre usuários.
      */
     public FriendService(UserService userService, RelationshipService relationshipService) {
         this.userService = userService;
@@ -28,9 +27,13 @@ public class FriendService {
     /**
      * Adiciona um amigo para um usuário.
      *
-     * @param login Nome de usuário.
-     * @param amigo Nome do amigo.
-     * @throws UserException Se houver algum problema ao adicionar o amigo.
+     * @param login Nome de usuário do remetente.
+     * @param amigo Nome de usuário do amigo a ser adicionado.
+     * @throws UserNotExistsException Se o usuário ou o amigo não existirem.
+     * @throws EnemyUserException Se o amigo for inimigo do usuário.
+     * @throws UserAlreadyRequestedAsFriendException Se o pedido de amizade já tiver sido enviado.
+     * @throws UserCannotAddHimselfAsFriendException Se o usuário tentar adicionar a si mesmo como amigo.
+     * @throws UserAlreadyAddedAsFriendException Se o amigo já tiver sido adicionado.
      */
     public void adicionarAmigo(String login, String amigo) throws UserNotExistsException, EnemyUserException, UserAlreadyRequestedAsFriendException, UserCannotAddHimselfAsFriendException, UserAlreadyAddedAsFriendException {
         User user = this.userService.getUser(login);
@@ -52,8 +55,8 @@ public class FriendService {
      * Obtém a lista de amigos de um usuário.
      *
      * @param login Nome de usuário.
-     * @return Lista de amigos.
-     * @throws Exception Se houver algum problema ao obter a lista de amigos.
+     * @return Uma string formatada contendo os amigos do usuário.
+     * @throws UserNotFoundException Se o usuário não for encontrado.
      */
     public String getAmigos(String login) throws UserNotFoundException {
         User user = this.userService.getUser(login);
@@ -75,9 +78,9 @@ public class FriendService {
     /**
      * Verifica se dois usuários são amigos.
      *
-     * @param login Nome de usuário.
-     * @param amigo Nome do amigo.
-     * @param user  Usuário remetente.
+     * @param login Nome de usuário do remetente.
+     * @param amigo Nome de usuário do amigo.
+     * @param user Usuário remetente.
      * @param friend Usuário destinatário.
      * @return true se forem amigos, false caso contrário.
      */
