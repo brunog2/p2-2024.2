@@ -4,10 +4,8 @@ public class UserAlreadyExistsException extends Exception {
 
     /**
      * Construtor da exceção UserException.
-     *
-     * @param message Mensagem de erro detalhada.
      */
-    public UserAlreadyExistsException(String message) {
+    public UserAlreadyExistsException() {
         super("Conta com esse nome já existe.");
     }
 }

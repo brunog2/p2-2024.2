@@ -1,6 +1,6 @@
 package br.ufal.ic.p2.jackut.services;
 
-import br.ufal.ic.p2.jackut.exceptions.UserException;
+import br.ufal.ic.p2.jackut.exceptions.*;
 import br.ufal.ic.p2.jackut.models.Message;
 import br.ufal.ic.p2.jackut.models.User;
 
@@ -31,18 +31,18 @@ public class MessagesService {
      * @param recado       Conteúdo do recado.
      * @throws Exception Se o usuário não estiver cadastrado ou tentar enviar recado para si mesmo.
      */
-    public void enviarRecado(String sessionId, String destinatario, String recado) throws Exception {
+    public void enviarRecado(String sessionId, String destinatario, String recado) throws UserCannotSendMessageToHimselfException, EnemyUserException, UserNotExistsException {
         User user = this.userService.getUser(sessionId);
         User receiver = this.userService.getUser(destinatario);
 
-        if (user == null || receiver == null) throw new UserException("Usuário não cadastrado.");
+        if (user == null || receiver == null) throw new UserNotExistsException();
 
         if (user.getLogin().equals(destinatario)) {
-            throw new Exception("Usuário não pode enviar recado para si mesmo.");
+            throw new UserCannotSendMessageToHimselfException();
         }
 
         if (relationshipService.isEnemy(destinatario, sessionId)) {
-            throw new UserException("Função inválida: " + receiver.getNome() + " é seu inimigo.");
+            throw new EnemyUserException(receiver.getNome());
         }
 
         Message message = new Message(recado, user, receiver);
@@ -56,15 +56,15 @@ public class MessagesService {
      * @return O conteúdo do recado.
      * @throws Exception Se o usuário não estiver cadastrado ou não houver recados.
      */
-    public String lerRecado(String sessionId) throws Exception {
+    public String lerRecado(String sessionId) throws EmptyUserMessagesException, UserNotExistsException {
         User user = this.userService.getUser(sessionId);
 
-        if (user == null) throw new UserException("Usuário não cadastrado.");
+        if (user == null) throw new UserNotExistsException();
 
         List<Message> messages = user.getMessages();
 
         if (messages.isEmpty()) {
-            throw new Exception("Não há recados.");
+            throw new EmptyUserMessagesException();
         }
 
         String message = messages.get(0).getContent();

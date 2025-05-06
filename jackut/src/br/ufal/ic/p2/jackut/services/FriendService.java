@@ -1,6 +1,6 @@
 package br.ufal.ic.p2.jackut.services;
 
-import br.ufal.ic.p2.jackut.exceptions.UserException;
+import br.ufal.ic.p2.jackut.exceptions.*;
 import br.ufal.ic.p2.jackut.models.User;
 import br.ufal.ic.p2.jackut.validators.FriendValidator;
 
@@ -32,7 +32,7 @@ public class FriendService {
      * @param amigo Nome do amigo.
      * @throws UserException Se houver algum problema ao adicionar o amigo.
      */
-    public void adicionarAmigo(String login, String amigo) throws UserException {
+    public void adicionarAmigo(String login, String amigo) throws UserNotExistsException, EnemyUserException, UserAlreadyRequestedAsFriendException, UserCannotAddHimselfAsFriendException, UserAlreadyAddedAsFriendException {
         User user = this.userService.getUser(login);
         User friend = this.userService.getUser(amigo);
 
@@ -55,10 +55,10 @@ public class FriendService {
      * @return Lista de amigos.
      * @throws Exception Se houver algum problema ao obter a lista de amigos.
      */
-    public String getAmigos(String login) throws Exception {
+    public String getAmigos(String login) throws UserNotFoundException {
         User user = this.userService.getUser(login);
 
-        if (user == null) throw new Exception("Usuário não encontrado.");
+        if (user == null) throw new UserNotFoundException();
 
         String friends = String.join(
                 ",",

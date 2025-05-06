@@ -1,9 +1,7 @@
 package br.ufal.ic.p2.jackut.services;
 
-import br.ufal.ic.p2.jackut.exceptions.CommunityException;
-import br.ufal.ic.p2.jackut.exceptions.UserException;
+import br.ufal.ic.p2.jackut.exceptions.*;
 import br.ufal.ic.p2.jackut.models.Community;
-import br.ufal.ic.p2.jackut.models.Message;
 import br.ufal.ic.p2.jackut.models.User;
 import br.ufal.ic.p2.jackut.repositories.UserRepository;
 import br.ufal.ic.p2.jackut.validators.UserValidator;
@@ -47,7 +45,7 @@ public class UserService implements UserLookupService {
      * @param nome  Nome real do usuário.
      * @throws UserException Se o login já estiver em uso ou os dados forem inválidos.
      */
-    public void criarUsuario(String login, String senha, String nome) throws UserException {
+    public void criarUsuario(String login, String senha, String nome) throws UserAlreadyExistsException, InvalidLoginException, InvalidPasswordException {
         UserValidator.validateNewUser(login, senha, nome, users);
         User user = new User(login, senha, nome);
         users.add(user);
@@ -61,7 +59,7 @@ public class UserService implements UserLookupService {
      * @return O login do usuário autenticado.
      * @throws UserException Se o login ou senha forem inválidos.
      */
-    public String abrirSessao(String login, String senha) throws UserException {
+    public String abrirSessao(String login, String senha) throws InvalidLoginOrPasswordException {
         User user = UserValidator.validateLogin(login, senha, users);
         sessionService.addSession(user);
         return login;
@@ -75,16 +73,16 @@ public class UserService implements UserLookupService {
      * @return O valor do atributo.
      * @throws UserException Se o usuário não existir ou o atributo não estiver preenchido.
      */
-    public String getAtributoUsuario(String login, String atributo) throws UserException {
+    public String getAtributoUsuario(String login, String atributo) throws UserNotExistsException, AttributeNotFilledException {
         User user = getUser(login);
 
 //        System.out.println("Usuário: " + user);
 
-        if (user == null) throw new UserException("Usuário não cadastrado.");
+        if (user == null) throw new UserNotExistsException();
 
         String attributeValue = this.userAttributeManager.getAtributo(user, atributo);
         if (attributeValue == null) {
-            throw new UserException("Atributo não preenchido.");
+            throw new AttributeNotFilledException();
         }
 
         return attributeValue;
@@ -98,10 +96,10 @@ public class UserService implements UserLookupService {
      * @param valor    Novo valor do atributo.
      * @throws UserException Se o usuário não existir.
      */
-    public void editarPerfil(String id, String atributo, String valor) throws UserException {
+    public void editarPerfil(String id, String atributo, String valor) throws UserNotExistsException {
         User user = getUser(id);
         if (user == null) {
-            throw new UserException("Usuário não cadastrado.");
+            throw new UserNotExistsException();
         }
         this.userAttributeManager.setAtributo(user, atributo, valor);
     }
@@ -126,34 +124,34 @@ public class UserService implements UserLookupService {
         User user = getUser(login);
 
         if (user == null) {
-            throw new UserException("Usuário não cadastrado.");
+            throw new UserNotExistsException();
         }
 
         return "{" + String.join(",", user.getCommunities()) + "}";
     }
 
-    public String readCommunityMessage(String login) throws Exception {
+    public String readCommunityMessage(String login) throws EmptyCommunityMessagesException, UserNotExistsException {
         User user = getUser(login);
 
         if (user == null) {
-            throw new UserException("Usuário não cadastrado.");
+            throw new UserNotExistsException();
         }
 
         String message = user.readCommunityMessage();
 
         if (message == null) {
-            throw new CommunityException("Não há mensagens.");
+            throw new EmptyCommunityMessagesException();
         }
 
         return message;
     }
 
-    public void removeUser(String login) throws UserException {
+    public void removeUser(String login) throws UserNotExistsException {
 //        System.out.println("Lista de usuários antes da remoção " + users);
 
         User user = getUser(login);
         if (user == null) {
-            throw new UserException("Usuário não cadastrado.");
+            throw new UserNotExistsException();
         }
 
         // Remove user from all communities

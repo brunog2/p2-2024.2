@@ -1,6 +1,6 @@
 package br.ufal.ic.p2.jackut.validators;
 
-import br.ufal.ic.p2.jackut.exceptions.UserException;
+import br.ufal.ic.p2.jackut.exceptions.*;
 import br.ufal.ic.p2.jackut.models.User;
 import br.ufal.ic.p2.jackut.services.FriendService;
 import br.ufal.ic.p2.jackut.services.RelationshipService;
@@ -13,7 +13,7 @@ import javax.management.relation.Relation;
  */
 public class FriendValidator {
     private UserService userService;
-private RelationshipService relationshipService;
+    private RelationshipService relationshipService;
 
     /**
      * Construtor do FriendValidator.
@@ -28,42 +28,40 @@ private RelationshipService relationshipService;
     /**
      * Valida a adição de um amigo para um usuário.
      *
-     * @param login Nome de usuário.
-     * @param amigo Nome do amigo.
-     * @param user  Usuário remetente.
+     * @param login  Nome de usuário.
+     * @param amigo  Nome do amigo.
+     * @param user   Usuário remetente.
      * @param friend Usuário destinatário.
      * @throws UserException Se houver algum problema na validação.
      */
-    public void validateAddFriend(String login, String amigo, User user, User friend) throws UserException {
+    public void validateAddFriend(String login, String amigo, User user, User friend) throws UserNotExistsException, EnemyUserException, UserAlreadyRequestedAsFriendException, UserCannotAddHimselfAsFriendException, UserAlreadyAddedAsFriendException {
         if (user == null || friend == null) {
-            throw new UserException("Usuário não cadastrado.");
+            throw new UserNotExistsException();
         }
 
-//        System.out.println("Validando adição de amigo: " + login + " -> " + amigo + " -> " + this.relationshipService.isEnemy(login, amigo)  + " -> " + this.userService.getUser(amigo).getEnemies());
-
         if (this.relationshipService.isEnemy(amigo, login)) {
-            throw new UserException("Função inválida: "+ this.userService.getUser(amigo).getNome() + " é seu inimigo.");
+            throw new EnemyUserException(this.userService.getUser(amigo).getNome());
         }
 
         if (user.getFriendsRequest().contains(friend)) {
-            throw new UserException("Usuário já está adicionado como amigo, esperando aceitação do convite.");
+            throw new UserAlreadyRequestedAsFriendException();
         }
 
         if (user.getLogin().equals(amigo)) {
-            throw new UserException("Usuário não pode adicionar a si mesmo como amigo.");
+            throw new UserCannotAddHimselfAsFriendException();
         }
 
         if (this.ehAmigo(login, amigo, user, friend)) {
-            throw new UserException("Usuário já está adicionado como amigo.");
+            throw new UserAlreadyAddedAsFriendException();
         }
     }
 
     /**
      * Verifica se dois usuários são amigos.
      *
-     * @param login Nome de usuário.
-     * @param amigo Nome do amigo.
-     * @param user  Usuário remetente.
+     * @param login  Nome de usuário.
+     * @param amigo  Nome do amigo.
+     * @param user   Usuário remetente.
      * @param friend Usuário destinatário.
      * @return true se forem amigos, false caso contrário.
      */

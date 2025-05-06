@@ -1,7 +1,6 @@
 package br.ufal.ic.p2.jackut.services;
 
-import br.ufal.ic.p2.jackut.exceptions.CommunityException;
-import br.ufal.ic.p2.jackut.exceptions.UserException;
+import br.ufal.ic.p2.jackut.exceptions.*;
 import br.ufal.ic.p2.jackut.models.Community;
 import br.ufal.ic.p2.jackut.models.User;
 import br.ufal.ic.p2.jackut.repositories.CommunityRepository;
@@ -20,11 +19,11 @@ public class CommunityService {
         this.userLookupService = userLookupService;
     }
 
-    public void createCommunity(String name, String description, String user) throws Exception {
+    public void createCommunity(String name, String description, String user) throws CommunityAlreadyExistsException {
         User owner = this.userLookupService.getUser(user);
 
         if (communities.stream().anyMatch(community -> community.getName().equals(name))) {
-            throw new CommunityException("Comunidade com esse nome já existe.");
+            throw new CommunityAlreadyExistsException();
         }
 
         Community community = new Community(name, description, owner);
@@ -33,22 +32,22 @@ public class CommunityService {
         owner.addCommunity(name);
     }
 
-    public Community getCommunity(String name) throws CommunityException {
+    public Community getCommunity(String name) throws CommunityNotExistsException {
         return communities.stream()
                 .filter(community -> community.getName().equals(name))
                 .findFirst()
-                .orElseThrow(() -> new CommunityException("Comunidade não existe."));
+                .orElseThrow(() -> new CommunityNotExistsException());
     }
 
-    public String getCommunityDescription(String name) throws CommunityException {
+    public String getCommunityDescription(String name) throws CommunityNotExistsException {
         return this.getCommunity(name).getDescription();
     }
 
-    public String getCommunityOwner(String name) throws CommunityException {
+    public String getCommunityOwner(String name) throws CommunityNotExistsException {
         return this.getCommunity(name).getOwner().getLogin();
     }
 
-    public String getCommunityMembers(String name) throws CommunityException {
+    public String getCommunityMembers(String name) throws CommunityNotExistsException {
         return ListFormatter.formatList(this.getCommunity(name).getMembers());
     }
 
@@ -61,16 +60,16 @@ public class CommunityService {
         this.saveCommunities();
     }
 
-    public void addMember(String communityName, String userName) throws Exception {
+    public void addMember(String communityName, String userName) throws CommunityNotExistsException, UserNotExistsException, UserAlreadyMemberOfCommunityException {
         Community community = this.getCommunity(communityName);
         User user = this.userLookupService.getUser(userName);
 
         if (user == null) {
-            throw new UserException("Usuário não cadastrado.");
+            throw new UserNotExistsException();
         }
 
         if (community.getMembers().contains(user.getLogin())) {
-            throw new CommunityException("Usuario já faz parte dessa comunidade.");
+            throw new UserAlreadyMemberOfCommunityException();
         }
 
         community.addMember(user);
@@ -86,7 +85,7 @@ public class CommunityService {
         User user = userLookupService.getUser(sessionId);
 
         if (user == null) {
-            throw new UserException("Usuário não cadastrado.");
+            throw new UserNotExistsException();
         }
 
         // Verifica se o usuário faz parte da comunidade
@@ -101,7 +100,7 @@ public class CommunityService {
         community.notifyObservers(message);
     }
 
-    public void removeCommunity(String name) throws CommunityException {
+    public void removeCommunity(String name) throws CommunityNotExistsException {
         Community community = this.getCommunity(name);
 
 

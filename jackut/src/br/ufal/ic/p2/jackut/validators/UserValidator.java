@@ -1,6 +1,6 @@
 package br.ufal.ic.p2.jackut.validators;
 
-import br.ufal.ic.p2.jackut.exceptions.UserException;
+import br.ufal.ic.p2.jackut.exceptions.*;
 import br.ufal.ic.p2.jackut.models.User;
 import java.util.List;
 
@@ -18,15 +18,15 @@ public class UserValidator {
      * @param users Lista de usuários existentes.
      * @throws UserException Se o login já estiver em uso ou os dados forem inválidos.
      */
-    public static void validateNewUser(String login, String senha, String nome, List<User> users) throws UserException {
+    public static void validateNewUser(String login, String senha, String nome, List<User> users) throws UserAlreadyExistsException, InvalidLoginException, InvalidPasswordException {
         if (users.stream().anyMatch(user -> user.getLogin().equals(login))) {
-            throw new UserException("Conta com esse nome já existe.");
+            throw new UserAlreadyExistsException();
         }
         if (login == null || login.isEmpty() || login.contains(" ")) {
-            throw new UserException("Login inválido.");
+            throw new InvalidLoginException();
         }
         if (senha == null || senha.isEmpty()) {
-            throw new UserException("Senha inválida.");
+            throw new InvalidPasswordException();
         }
     }
 
@@ -39,10 +39,10 @@ public class UserValidator {
      * @return O usuário autenticado.
      * @throws UserException Se o login ou senha forem inválidos.
      */
-    public static User validateLogin(String login, String senha, List<User> users) throws UserException {
+    public static User validateLogin(String login, String senha, List<User> users) throws InvalidLoginOrPasswordException {
         return users.stream()
                 .filter(user -> user.getLogin().equals(login) && user.getSenha().equals(senha))
                 .findFirst()
-                .orElseThrow(() -> new UserException("Login ou senha inválidos."));
+                .orElseThrow(() -> new InvalidLoginOrPasswordException());
     }
 }
